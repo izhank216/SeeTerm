@@ -2,7 +2,6 @@ package com.izhan.seeterm;
 
 import com.jcraft.jsch.*;
 import com.google.common.base.Strings;
-import org.apache.commons.io.FileUtils;
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.Scene;
@@ -12,6 +11,9 @@ import netscape.javascript.JSObject;
 import javax.swing.*;
 import java.io.*;
 import java.net.URL;
+import java.nio.file.*;
+import java.nio.file.FileSystem;
+import java.util.Map;
 
 public class Main {
 
@@ -154,8 +156,31 @@ public class Main {
                 ClassLoader classLoader = WebResourceManager.class.getClassLoader();
                 URL resource = classLoader.getResource("web/" + folder);
                 if (resource != null) {
-                    File source = new File(resource.getPath());
-                    FileUtils.copyDirectory(source, new File(targetDir, folder));
+                    if (resource.getProtocol().equals("jar")) {
+                        try (FileSystem fs = FileSystems.newFileSystem(resource.toURI(), Map.of())) {
+                            Path jarPath = fs.getPath("web/" + folder);
+                            Files.walk(jarPath).forEach(src -> {
+                                try {
+                                    Path dest = Paths.get(targetDir.getAbsolutePath(), jarPath.relativize(src).toString());
+                                    if (Files.isDirectory(src)) Files.createDirectories(dest);
+                                    else Files.copy(src, dest, StandardCopyOption.REPLACE_EXISTING);
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            });
+                        }
+                    } else {
+                        Path srcPath = Paths.get(resource.toURI());
+                        Files.walk(srcPath).forEach(src -> {
+                            try {
+                                Path dest = Paths.get(targetDir.getAbsolutePath(), srcPath.relativize(src).toString());
+                                if (Files.isDirectory(src)) Files.createDirectories(dest);
+                                else Files.copy(src, dest, StandardCopyOption.REPLACE_EXISTING);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        });
+                    }
                 }
             }
 
