@@ -156,12 +156,25 @@ public class Main {
                 ClassLoader classLoader = WebResourceManager.class.getClassLoader();
                 URL resource = classLoader.getResource("web/" + folder);
                 if (resource != null) {
-                    if (resource.getProtocol().equals("jar")) {
-                        try (FileSystem fs = FileSystems.newFileSystem(resource.toURI(), Map.of())) {
-                            Path jarPath = fs.getPath("web/" + folder);
-                            Files.walk(jarPath).forEach(src -> {
+                    try {
+                        if (resource.getProtocol().equals("jar")) {
+                            try (FileSystem fs = FileSystems.newFileSystem(resource.toURI(), Map.of())) {
+                                Path jarPath = fs.getPath("web/" + folder);
+                                Files.walk(jarPath).forEach(src -> {
+                                    try {
+                                        Path dest = Paths.get(targetDir.getAbsolutePath(), jarPath.relativize(src).toString());
+                                        if (Files.isDirectory(src)) Files.createDirectories(dest);
+                                        else Files.copy(src, dest, StandardCopyOption.REPLACE_EXISTING);
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+                                });
+                            }
+                        } else {
+                            Path srcPath = Paths.get(resource.toURI());
+                            Files.walk(srcPath).forEach(src -> {
                                 try {
-                                    Path dest = Paths.get(targetDir.getAbsolutePath(), jarPath.relativize(src).toString());
+                                    Path dest = Paths.get(targetDir.getAbsolutePath(), srcPath.relativize(src).toString());
                                     if (Files.isDirectory(src)) Files.createDirectories(dest);
                                     else Files.copy(src, dest, StandardCopyOption.REPLACE_EXISTING);
                                 } catch (IOException e) {
@@ -169,17 +182,8 @@ public class Main {
                                 }
                             });
                         }
-                    } else {
-                        Path srcPath = Paths.get(resource.toURI());
-                        Files.walk(srcPath).forEach(src -> {
-                            try {
-                                Path dest = Paths.get(targetDir.getAbsolutePath(), srcPath.relativize(src).toString());
-                                if (Files.isDirectory(src)) Files.createDirectories(dest);
-                                else Files.copy(src, dest, StandardCopyOption.REPLACE_EXISTING);
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        });
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
                 }
             }
