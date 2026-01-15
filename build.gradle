@@ -11,21 +11,29 @@ repositories {
     mavenCentral()
 }
 
+def javaFXVersion = '23.1.1'
+def os = org.gradle.internal.os.OperatingSystem.current()
+def classifier = ''
+
+if (os.isWindows()) classifier = 'win'
+else if (os.isLinux()) classifier = 'linux'
+else if (os.isMacOsX()) classifier = 'mac'
+
 dependencies {
-    implementation 'com.google.guava:guava:32.1.2-jre'
-    implementation 'commons-io:commons-io:2.13.0'
-    implementation 'org.openjfx:javafx-controls:23.1.1'
-    implementation 'org.openjfx:javafx-web:23.1.1'
-    implementation 'com.google.code.gson:gson:2.10.1'
-    implementation 'com.jcraft:jsch:0.1.55'
+    implementation "org.openjfx:javafx-controls:$javaFXVersion:$classifier"
+    implementation "org.openjfx:javafx-web:$javaFXVersion:$classifier"
+    implementation "com.google.guava:guava:32.1.2-jre"
+    implementation "commons-io:commons-io:2.13.0"
+    implementation "com.google.code.gson:gson:2.10.1"
+    implementation "com.jcraft:jsch:0.1.55"
 }
 
 application {
     mainClass = 'com.izhan.seeterm.Main'
 }
 
-sourceCompatibility = '17'
-targetCompatibility = '17'
+sourceCompatibility = '21'
+targetCompatibility = '21'
 
 shadowJar {
     archiveBaseName.set('Seeterm')
