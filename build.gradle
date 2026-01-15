@@ -1,0 +1,34 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
+}
+
+group = 'com.izhan'
+version = '1.0'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'com.google.guava:guava:32.1.2-jre'
+    implementation 'commons-io:commons-io:2.13.0'
+    implementation 'org.openjfx:javafx-controls:23.1.1'
+    implementation 'org.openjfx:javafx-web:23.1.1'
+    implementation 'com.google.code.gson:gson:2.10.1'
+    implementation 'com.jcraft:jsch:0.1.55'
+}
+
+application {
+    mainClass = 'com.izhan.seeterm.Main'
+}
+
+sourceCompatibility = '17'
+targetCompatibility = '17'
+
+shadowJar {
+    archiveBaseName.set('Seeterm')
+    archiveVersion.set('1.0')
+    archiveClassifier.set('')
+}
