@@ -24,6 +24,7 @@ body {
 }
 
 #connect-form button {
+    font-family: 'Inter', sans-serif;
     padding:10px 20px;
     border-radius:5px;
     border:none;
@@ -38,3 +39,12 @@ body {
     margin-top:20px;
     font-family: 'Ubuntu Mono', monospace;
 }
+
+#port {
+    font-family: 'Inter', sans-serif;
+}
+
+#server {
+    font-family: 'Inter', sans-serif;
+}
+
