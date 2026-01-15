@@ -118,6 +118,7 @@ jobs:
           git config user.email "github-actions@users.noreply.github.com"
           git tag $TIMESTAMP
           git push origin $TIMESTAMP
+          sleep 10
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
@@ -130,5 +131,6 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: release/*.jar
+          tag_name: ${{ env.TAG_NAME }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
