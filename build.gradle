@@ -28,6 +28,12 @@ dependencies {
     implementation "com.jcraft:jsch:0.1.55"
 }
 
+tasks.withType(JavaExec) {
+    jvmArgs += [
+        '--add-modules', 'javafx.controls,javafx.web'
+    ]
+}
+
 application {
     mainClass = 'com.izhan.seeterm.Main'
 }
