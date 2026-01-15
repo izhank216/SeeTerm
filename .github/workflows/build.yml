@@ -1,0 +1,55 @@
+name: Build and Release Seeterm
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Install Gradle
+        uses: gradle/gradle-build-action@v2
+        with:
+          gradle-version: 9.7
+
+      - name: Build Project
+        run: gradle build
+
+      - name: Create executable JAR
+        run: gradle shadowJar
+
+      - name: Create tag based on date-time-seconds
+        id: tag
+        run: |
+          TIMESTAMP=$(date +'%Y-%m-%d-%H-%M-%S')
+          echo "TAG_NAME=$TIMESTAMP" >> $GITHUB_ENV
+          git config user.name "github-actions"
+          git config user.email "github-actions@users.noreply.github.com"
+          git tag $TIMESTAMP
+          git push origin $TIMESTAMP
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ env.TAG_NAME }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload JAR to Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: build/libs/*.jar
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
