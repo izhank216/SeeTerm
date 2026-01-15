@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Seeterm - SSH Client</title>
+<link href="https://fonts.googleapis.com/css2?family=Ubuntu+Mono&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/xterm.css">
+<link rel="stylesheet" href="../css/style.css">
+<script src="../js/jquery.min.js"></script>
+<script src="../js/xterm.js"></script>
+<script src="../js/app.js"></script>
+</head>
+<body>
+<div id="connect-form">
+<h2>Connect to SSH Server</h2>
+<input type="text" id="server" placeholder="Server IP or hostname" />
+<input type="number" id="port" placeholder="Port (default 22)" value="22" />
+<button id="connect-btn">Connect</button>
+</div>
+<div id="terminal-container" style="display:none;"></div>
+</body>
+</html>
